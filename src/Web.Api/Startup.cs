@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NLog;
 using Swashbuckle.AspNetCore.Swagger;
 using Web.Api.Core;
@@ -133,25 +134,52 @@ namespace Web.Api
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-            services.AddAutoMapper();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "AspNetCoreApiStarter", Version = "v1" });
+                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AspNetCoreApiStarter", Version = "v1" });
                 // Swagger 2.+ support
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = "header",
-                    Description = "Please insert JWT with Bearer into field",
+                    Description ="JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
                     Name = "Authorization",
-                    Type = "apiKey"
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
                 });
 
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
-                    { "Bearer", new string[] { } }
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
                 });
+                //c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                //{
+                //    In = "header",
+                //    Description = "Please insert JWT with Bearer into field",
+                //    Name = "Authorization",
+                //    Type = "apiKey"
+                //});
+
+                //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                //{
+                //    { "Bearer", new string[] { } }
+                //});
             });
 
             // Now register our services with Autofac container.

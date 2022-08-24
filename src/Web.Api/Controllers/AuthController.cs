@@ -29,7 +29,7 @@ namespace Web.Api.Controllers
 
         // POST api/auth/login
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] Models.Request.LoginRequest request)
+        public async Task<Microsoft.AspNetCore.Mvc.ActionResult> Login([FromBody] Models.Request.LoginRequest request)
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
             await _loginUseCase.Handle(new LoginRequest(request.UserName, request.Password, Request.HttpContext.Connection.RemoteIpAddress?.ToString()), _loginPresenter);
@@ -38,7 +38,7 @@ namespace Web.Api.Controllers
 
         // POST api/auth/refreshtoken
         [HttpPost("refreshtoken")]
-        public async Task<ActionResult> RefreshToken([FromBody] Models.Request.ExchangeRefreshTokenRequest request)
+        public async Task<Microsoft.AspNetCore.Mvc.ActionResult> RefreshToken([FromBody] Models.Request.ExchangeRefreshTokenRequest request)
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState);}
             await _exchangeRefreshTokenUseCase.Handle(new ExchangeRefreshTokenRequest(request.AccessToken, request.RefreshToken, _authSettings.SecretKey), _exchangeRefreshTokenPresenter);

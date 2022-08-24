@@ -17,19 +17,19 @@ namespace Web.Api.IntegrationTests
             {
                 // Create a new service provider.
                 var serviceProvider = new ServiceCollection()
-                    //.AddEntityFrameworkInMemoryDatabase()
+                    .AddEntityFrameworkInMemoryDatabase()
                     .BuildServiceProvider();
 
                 // Add a database context (AppDbContext) using an in-memory database for testing.
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    //options.UseInMemoryDatabase("InMemoryAppDb");
+                    options.UseInMemoryDatabase("InMemoryAppDb");
                     options.UseInternalServiceProvider(serviceProvider);
                 });
 
                 services.AddDbContext<AppIdentityDbContext>(options =>
                 {
-                    //options.UseInMemoryDatabase("InMemoryIdentityDb");
+                    options.UseInMemoryDatabase("InMemoryIdentityDb");
                     options.UseInternalServiceProvider(serviceProvider);
                 });
 
